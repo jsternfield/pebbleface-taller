@@ -1,0 +1,95 @@
+{
+    "author": "FNA",
+    "dependencies": {},
+    "keywords": [],
+    "name": "taller",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "taller",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "fonts/steelfish.ttf",
+                    "name": "FONT_18",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "images/num_9.png",
+                    "name": "IMAGE_NUM_9",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_8.png",
+                    "name": "IMAGE_NUM_8",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_7.png",
+                    "name": "IMAGE_NUM_7",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_6.png",
+                    "name": "IMAGE_NUM_6",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_5.png",
+                    "name": "IMAGE_NUM_5",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_0.png",
+                    "name": "IMAGE_NUM_0",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_4.png",
+                    "name": "IMAGE_NUM_4",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_3.png",
+                    "name": "IMAGE_NUM_3",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_2.png",
+                    "name": "IMAGE_NUM_2",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/num_1.png",
+                    "name": "IMAGE_NUM_1",
+                    "targetPlatforms": null,
+                    "type": "png"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt"
+        ],
+        "uuid": "50940614-1ccd-4672-9366-6a598d28381e",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
