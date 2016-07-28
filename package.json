@@ -1,83 +1,148 @@
 {
     "author": "FNA",
-    "dependencies": {},
+    "dependencies": {
+        "pebble-clay": "^1.0.2",
+        "pebble-owm-weather": "^1.0.0"
+    },
     "keywords": [],
     "name": "taller",
     "pebble": {
         "capabilities": [
-            ""
+            "configurable"
         ],
         "displayName": "taller",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": [
+            "BigHour"
+        ],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/9s.png",
+                    "name": "9S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/9.png",
+                    "name": "9",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/8s.png",
+                    "name": "8S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/8.png",
+                    "name": "8",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/7s.png",
+                    "name": "7S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/7.png",
+                    "name": "7",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/6s.png",
+                    "name": "6S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/6.png",
+                    "name": "6",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/5s.png",
+                    "name": "5S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/5.png",
+                    "name": "5",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/4s.png",
+                    "name": "4S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/4.png",
+                    "name": "4",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/3s.png",
+                    "name": "3S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/3.png",
+                    "name": "3",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/2s.png",
+                    "name": "2S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/2.png",
+                    "name": "2",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/1s.png",
+                    "name": "1S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/1.png",
+                    "name": "1",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/0s.png",
+                    "name": "0S",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/0.png",
+                    "name": "0",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
                 {
                     "file": "fonts/steelfish.ttf",
                     "name": "FONT_18",
                     "targetPlatforms": null,
                     "type": "font"
-                },
-                {
-                    "file": "images/num_9.png",
-                    "name": "IMAGE_NUM_9",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_8.png",
-                    "name": "IMAGE_NUM_8",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_7.png",
-                    "name": "IMAGE_NUM_7",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_6.png",
-                    "name": "IMAGE_NUM_6",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_5.png",
-                    "name": "IMAGE_NUM_5",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_0.png",
-                    "name": "IMAGE_NUM_0",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_4.png",
-                    "name": "IMAGE_NUM_4",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_3.png",
-                    "name": "IMAGE_NUM_3",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_2.png",
-                    "name": "IMAGE_NUM_2",
-                    "targetPlatforms": null,
-                    "type": "png"
-                },
-                {
-                    "file": "images/num_1.png",
-                    "name": "IMAGE_NUM_1",
-                    "targetPlatforms": null,
-                    "type": "png"
                 }
             ]
         },

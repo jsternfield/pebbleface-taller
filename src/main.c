@@ -1,49 +1,54 @@
-#include "pebble.h"
+#include <pebble.h>
+#include <pebble-owm-weather/owm-weather.h>
+#include <pebble-events/pebble-events.h>
+
+#include "main.h"
+
 
 static Window *window;
 static Layer* canvas;
 
-#define TOTAL_TIME_DIGITS 4
 static GBitmap* time_digits_images[TOTAL_TIME_DIGITS];
 static BitmapLayer* time_digits_layers[TOTAL_TIME_DIGITS];
 
-static GPoint mImageSizeBig = { .x = 30, .y = 154 };
-static GPoint mImageSizeSm = { .x = 30, .y = 77 };
+const int DIGIT_RESOURCE_IDS[] = {
+  RESOURCE_ID_0,
+  RESOURCE_ID_1,
+  RESOURCE_ID_2,
+  RESOURCE_ID_3,
+  RESOURCE_ID_4,
+  RESOURCE_ID_5,
+  RESOURCE_ID_6,
+  RESOURCE_ID_7,
+  RESOURCE_ID_8,
+  RESOURCE_ID_9
+};
 
-static GPoint mHourPoint1 = { .x = 2, .y = 7 };
-static GPoint mHourPoint2 = { .x = 34, .y = 7 };
-static GPoint mMinutePoint1 = { .x = 76, .y = 7 };
-static GPoint mMinutePoint2 = { .x = 108, .y = 7 };
-
-static GFont mFont;
-static char* mDayText = NULL;
-static int mDayTextSize = sizeof("WEDNESDAY ");
-static GPoint mDayPoint = { .x = 40, .y = 90 };
-
-const int BIG_DIGIT_IMAGE_RESOURCE_IDS[] = {
-  RESOURCE_ID_IMAGE_NUM_0,
-  RESOURCE_ID_IMAGE_NUM_1,
-  RESOURCE_ID_IMAGE_NUM_2,
-  RESOURCE_ID_IMAGE_NUM_3,
-  RESOURCE_ID_IMAGE_NUM_4,
-  RESOURCE_ID_IMAGE_NUM_5,
-  RESOURCE_ID_IMAGE_NUM_6,
-  RESOURCE_ID_IMAGE_NUM_7,
-  RESOURCE_ID_IMAGE_NUM_8,
-  RESOURCE_ID_IMAGE_NUM_9
+const int DIGIT_RESOURCE_IDS_S[] = {
+  RESOURCE_ID_0S,
+  RESOURCE_ID_1S,
+  RESOURCE_ID_2S,
+  RESOURCE_ID_3S,
+  RESOURCE_ID_4S,
+  RESOURCE_ID_5S,
+  RESOURCE_ID_6S,
+  RESOURCE_ID_7S,
+  RESOURCE_ID_8S,
+  RESOURCE_ID_9S
 };
 
 static void render(Layer *layer, GContext* ctx) 
 {
     graphics_context_set_text_color(ctx, GColorWhite);
 
-    graphics_draw_text(ctx, mDayText, mFont, GRect(mDayPoint.x, mDayPoint.y, 144, 168), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+    GPoint dayPoint = mBigHour ? mDayPoint : mDayPointAlt;
+    graphics_draw_text(ctx, mDayText, mFont, GRect(dayPoint.x, dayPoint.y, SCREEN_W2, SCREEN_H), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
 
 static void set_container_image(GBitmap **bmp_image, BitmapLayer *bmp_layer, const int resource_id, GPoint origin, bool isBig)
 {
     GBitmap *old_image = *bmp_image;
-    *bmp_image = gbitmap_create_with_resource(resource_id);
+    *bmp_image = isBig ? gbitmap_create_with_resource(DIGIT_RESOURCE_IDS[resource_id]) : gbitmap_create_with_resource(DIGIT_RESOURCE_IDS_S[resource_id]);
 
     GRect frame = isBig ? GRect(origin.x, origin.y, mImageSizeBig.x, mImageSizeBig.y) : GRect(origin.x, origin.y, mImageSizeSm.x, mImageSizeSm.y);
   
@@ -84,8 +89,10 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed)
     {
         unsigned short display_hour = get_display_hour(tick_time->tm_hour);
 
-        set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], mHourPoint1, true);
-        set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], mHourPoint2, true);
+        GPoint hourPoint = mBigHour ? GPoint(DIGIT_X1, DIGIT_Y) : GPoint(DIGIT_X1_S-SCREEN_W2-BHOFFSET, DIGIT_Y);;
+        set_container_image(&time_digits_images[0], time_digits_layers[0], display_hour/10, hourPoint, mBigHour);
+        hourPoint.x = mBigHour ? DIGIT_X2 : DIGIT_X2_S-SCREEN_W2-BHOFFSET;
+        set_container_image(&time_digits_images[1], time_digits_layers[1], display_hour%10, hourPoint, mBigHour);
 
         if (!clock_is_24h_style())
         {
@@ -101,9 +108,45 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed)
     }
     if (units_changed & MINUTE_UNIT)
     {
-        set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], mMinutePoint1, false);
-        set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], mMinutePoint2, false);
+        GPoint minutePoint = mBigHour ? GPoint(DIGIT_X1_S, DIGIT_Y) : GPoint(SCREEN_W2+DIGIT_X1-BHOFFSET, DIGIT_Y);
+        set_container_image(&time_digits_images[2], time_digits_layers[2], tick_time->tm_min/10, minutePoint, !mBigHour);
+        minutePoint.x = mBigHour ? DIGIT_X2_S : SCREEN_W2+DIGIT_X2-BHOFFSET;
+        set_container_image(&time_digits_images[3], time_digits_layers[3], tick_time->tm_min%10, minutePoint, !mBigHour);
     }	
+}
+
+static void load_settings()
+{
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "load_settings");
+    if (persist_exists(0))
+    {
+        mBigHour = persist_read_bool(0);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "load_settings - setting found: %d", mBigHour);
+    }
+    else
+    {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "load_settings - setting missing");
+        persist_write_bool(0, true);
+    }
+}
+
+static void inbox_received_handler(DictionaryIterator *iter, void *context)
+{
+    // Read preferences
+    Tuple* big_hour_t = dict_find(iter, MESSAGE_KEY_BigHour);
+    if (big_hour_t)
+    {
+        mBigHour = big_hour_t->value->int32 == 1;
+        
+        // Save the setting.
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "load_settings - setting set: %d", mBigHour);
+        persist_write_bool(0, mBigHour);
+        
+        // Force a redraw with updated settings.
+        time_t now = time(NULL);
+        struct tm *tick_time = localtime(&now);
+        handle_tick(tick_time, DAY_UNIT + HOUR_UNIT + MINUTE_UNIT);
+    }
 }
 
 static void init(void)
@@ -129,6 +172,16 @@ static void init(void)
 	
     window_stack_push(window, true);
     Layer *window_layer = window_get_root_layer(window);
+    
+    load_settings();
+    
+    // Open AppMessage connection
+    app_message_register_inbox_received(inbox_received_handler);
+    app_message_open(128, 128);
+    
+    //owm_weather_init(5ba77aab84470992ddc7e49e4985aeab);
+    //events_app_message_open();
+    //owm_weather_fetch();
  
     // Create time and date layers
     GRect dummy_frame = { {0, 0}, {0, 0} };
