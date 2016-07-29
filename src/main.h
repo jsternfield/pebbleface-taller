@@ -12,13 +12,21 @@
 #define DIGIT_X2_S 114
 #define BHOFFSET 4
 
+#define TEXT_SIZE 20
+#define TEXT_OFFSET 2
+
 GPoint mImageSizeBig = { .x = 33, .y = 158 };
 GPoint mImageSizeSm = { .x = 23, .y = 74 };
 
 GFont mFont;
 char* mDayText = NULL;
-int mDayTextSize = sizeof("WEDNESDAY ");
-GPoint mDayPoint = { .x = 78, .y = 94 };
-GPoint mDayPointAlt = { .x = 0, .y = 94 };
+int mDayTextSize = sizeof("WEDS 01/01 ");
+char* mWeatherText = NULL;
+int mWeatherTextSize = sizeof("TEMP: 00 F ");
+char* mBatteryText = NULL;
+int mBatteryTextSize = sizeof("BATT: 100% ");
+
+GPoint mTextPoint = { .x = SCREEN_W2, .y = 94 };
+GPoint mTextPointAlt = { .x = 0, .y = 94 };
 
 bool mBigHour = true;

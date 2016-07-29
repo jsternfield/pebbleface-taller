@@ -41,8 +41,10 @@ static void render(Layer *layer, GContext* ctx)
 {
     graphics_context_set_text_color(ctx, GColorWhite);
 
-    GPoint dayPoint = mBigHour ? mDayPoint : mDayPointAlt;
-    graphics_draw_text(ctx, mDayText, mFont, GRect(dayPoint.x, dayPoint.y, SCREEN_W2, SCREEN_H), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+    GPoint txtPoint = mBigHour ? mTextPoint : mTextPointAlt;
+    graphics_draw_text(ctx, mDayText, mFont, GRect(txtPoint.x, txtPoint.y, SCREEN_W2, SCREEN_H), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+    graphics_draw_text(ctx, mWeatherText, mFont, GRect(txtPoint.x, txtPoint.y+TEXT_SIZE+TEXT_OFFSET, SCREEN_W2, SCREEN_H), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+    graphics_draw_text(ctx, mBatteryText, mFont, GRect(txtPoint.x, txtPoint.y+TEXT_SIZE*2+TEXT_OFFSET*2, SCREEN_W2, SCREEN_H), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
 
 static void set_container_image(GBitmap **bmp_image, BitmapLayer *bmp_layer, const int resource_id, GPoint origin, bool isBig)
@@ -75,7 +77,7 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed)
     if (units_changed & DAY_UNIT)
     {
         // Get the day and convert text uppercase
-        strftime(mDayText, mDayTextSize, "%A", tick_time);
+        strftime(mDayText, mDayTextSize, "%a %m/%d", tick_time);
         for (int i = 0; mDayText[i] != 0; i++)
         {
             if (mDayText[i] >= 'a' && mDayText[i] <= 'z')
@@ -113,6 +115,17 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed)
         minutePoint.x = mBigHour ? DIGIT_X2_S : SCREEN_W2+DIGIT_X2-BHOFFSET;
         set_container_image(&time_digits_images[3], time_digits_layers[3], tick_time->tm_min%10, minutePoint, !mBigHour);
     }	
+}
+
+static void handle_weather()
+{
+    mWeatherText = "TEMP: 99 F";
+}
+
+static void handle_battery(BatteryChargeState charge_state)
+{
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "battery_handler. mark BG dirty");
+    snprintf(mBatteryText, mBatteryTextSize, "BATT: %3d%%", charge_state.charge_percent);
 }
 
 static void load_settings()
@@ -181,7 +194,11 @@ static void init(void)
     
     //owm_weather_init(5ba77aab84470992ddc7e49e4985aeab);
     //events_app_message_open();
-    //owm_weather_fetch();
+    //owm_weather_fetch();    
+    handle_weather();
+    
+    handle_battery(battery_state_service_peek());
+    battery_state_service_subscribe(handle_battery);
  
     // Create time and date layers
     GRect dummy_frame = { {0, 0}, {0, 0} };
@@ -191,15 +208,17 @@ static void init(void)
         time_digits_layers[i] = bitmap_layer_create(dummy_frame);
         layer_add_child(window_layer, bitmap_layer_get_layer(time_digits_layers[i]));
     }
-    
-    mFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_18));
-    mDayText = malloc(sizeof("WEDNESDAY "));
 
+    mFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_20));
+    mDayText = malloc(mDayTextSize);
+    mWeatherText = malloc(mWeatherTextSize);
+    mBatteryText = malloc(mBatteryTextSize);
+    
     // Avoids a blank screen on watch start.
     time_t now = time(NULL);
     struct tm *tick_time = localtime(&now);
     handle_tick(tick_time, DAY_UNIT + HOUR_UNIT + MINUTE_UNIT);
-
+    
     tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
 }
 

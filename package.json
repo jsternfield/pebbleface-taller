@@ -5,12 +5,12 @@
         "pebble-owm-weather": "^1.0.0"
     },
     "keywords": [],
-    "name": "taller",
+    "name": "littlebigtime",
     "pebble": {
         "capabilities": [
             "configurable"
         ],
-        "displayName": "taller",
+        "displayName": "LittleBigTime",
         "enableMultiJS": true,
         "messageKeys": [
             "BigHour"
@@ -140,7 +140,7 @@
                 },
                 {
                     "file": "fonts/steelfish.ttf",
-                    "name": "FONT_18",
+                    "name": "FONT_20",
                     "targetPlatforms": null,
                     "type": "font"
                 }
@@ -156,5 +156,5 @@
             "watchface": true
         }
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
 }
